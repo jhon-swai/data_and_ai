@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Sep  9 18:18:33 2020
+
+@author: chinaa
+"""
+
 from newspaper import Article
 import random
 import string
@@ -62,7 +70,7 @@ def bot_response(user_input):
     
     # get the similarity score
     similarity_scores = cosine_similarity(cm[-1], cm)
-    similarty_scores_list = similarty_scores.flatten()
+    similarty_scores_list = similarity_scores.flatten()
     
     # to get index of the highest element
     index = index_sort(similarty_scores_list)
