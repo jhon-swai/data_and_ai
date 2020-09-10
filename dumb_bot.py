@@ -79,6 +79,9 @@ def bot_response(user_input):
     #cleaning user data 
     cleaned_user_input = clean_string(user_input)
     cleaned_sentence_list.append(cleaned_user_input)
+
+    #adding the user input into the sentence array
+    sentence_list.append( user_input.lower() )
     
     bot_response = ''
     cm  = CountVectorizer().fit_transform(cleaned_sentence_list)
@@ -111,6 +114,7 @@ def bot_response(user_input):
     
     # removing the added user input
     cleaned_sentence_list.remove(cleaned_user_input)
+    sentence_list.remove( user_input.lower() )
     
     return bot_response
 
