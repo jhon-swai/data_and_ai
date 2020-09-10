@@ -1,21 +1,18 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep  9 18:18:33 2020
-
-@author: chinaa
-"""
-
 from newspaper import Article
 import random
 import string
 import nltk
+nltk.download('stopwords', quiet=True)
+from nltk.corpus import stopwords
+
 import numpy as np
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import warnings
 warnings.filterwarnings('ignore')
+
+stopwords = stopwords.words('english')
 
 nltk.download('punkt', quiet=True)
 
@@ -28,7 +25,24 @@ corpus = article.text
 
 text = corpus
 sentence_list = nltk.sent_tokenize(text) # a list of sentences
- 
+
+# a Function to perform data cleaning 
+
+def clean_string(text):
+    # Removing punctuation from a given string
+    text = ''.join([word for word in text if word not in string.punctuation])
+    
+    # Converting to lower case
+    text = text.lower()
+    
+    # removing stopwords
+    text = ' '.join([word for word in text.split() if word not in stopwords])
+    
+    return text
+
+#built in map function instead of loop to perform the sentence transformation
+cleaned_sentence_list = list( map(clean_string, sentence_list))
+
 # a function to return a random greeting response to a users greetings 
 def greeting_response(text):
     text = text.lower()
@@ -44,7 +58,7 @@ def greeting_response(text):
         if word in user_greetings:
             return random.choice(bot_greetings)
     return None
-
+        
 def index_sort(list_var):
     length = len(list_var)
     list_index = list(range(0,length))
@@ -59,21 +73,24 @@ def index_sort(list_var):
                 list_index[j] = temp
                 
     return list_index
-
 # create bot response
 def bot_response(user_input):
-    user_input = user_input.lower()
-    sentence_list.append(user_input)
+    
+    #cleaning user data 
+    cleaned_user_input = clean_string(user_input)
+    cleaned_sentence_list.append(cleaned_user_input)
     
     bot_response = ''
-    cm  = CountVectorizer().fit_transform(sentence_list)
+    cm  = CountVectorizer().fit_transform(cleaned_sentence_list)
     
     # get the similarity score
     similarity_scores = cosine_similarity(cm[-1], cm)
     similarty_scores_list = similarity_scores.flatten()
     
-    # to get index of the highest element
+    # to get index of the highest element first list
     index = index_sort(similarty_scores_list)
+    
+    # removing the first index which is obviously the user's own input
     index = index[1:]
     response_flag = 0
     
@@ -92,13 +109,14 @@ def bot_response(user_input):
     if response_flag == 0:
         bot_response = bot_response + ' ' + "I apologize, I don\'t understand"
     
-    sentence_list.remove(user_input)
+    # removing the added user input
+    cleaned_sentence_list.remove(cleaned_user_input)
     
     return bot_response
 
 exit_list = ['exit', 'bye', 'end']
 
-def user_input():
+def user_input_f():
     print("This is Doc Bot ready to answer your questions ")
     
     while(True):
@@ -113,4 +131,4 @@ def user_input():
             else:
                 print('Doc Bot: ' +  bot_response(user_input) )
 
-user_input()
+user_input_f()
