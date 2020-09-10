@@ -102,9 +102,7 @@ def bot_response(user_input):
     bot_response = ''
     for i in range(len(index)):
         if similarty_scores_list[index[i]] > 0.0:
-#             bot_response = bot_response + " " + sentence_list[index[i]]
-            print( str(len(similarty_scores_list)) + " similarity scores")
-            print( str(len(sentence_list)) + " sentence list")
+            bot_response = bot_response + " " + sentence_list[index[i]]
             response_flag = 1 
             
             j = j+1
