@@ -8,6 +8,8 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import warnings
+import json
+
 warnings.filterwarnings('ignore')
 
 # list of swahili stopwords 
@@ -28,9 +30,9 @@ sentence_list = nltk.sent_tokenize(text) # a list of sentences
 # a Function to perform data cleaning 
 
 def clean_string(text):
-    # Removing punctuation from a given string
-    text = ''.join([word for word in text if word not in string.punctuation])
     
+    #Removing the newline replacing it with space
+    text = text.replace("\n", " ")
     # Converting to lower case
     text = text.lower()
     
