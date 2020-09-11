@@ -1,5 +1,4 @@
 # This bot is based on json file processing 
-
 from newspaper import Article
 import random
 import string
@@ -32,7 +31,11 @@ def clean_string(text):
     #Removing the newline replacing it with space
     text = text.replace("\n", " ")
     # Converting to lower case
-    text = text.lower()    
+    text = text.lower() 
+
+    #remove stopwords 
+    text = ' '.join([word for word in text.split() if word not in stopwords])
+    
     return text
 
 def remove_stopwords(text):
@@ -74,12 +77,16 @@ def json_file_manager():
     sourceFile = open("swahili_qna.json", 'rt')
     #We now have a list of all the questions and answers ie list of dictionaries
     sFileRead = sourceFile.read()
+    sFileReadList = json.loads(sFileRead)
 
     #converting the files to a list of questions and answers 
-    conv_list_of_qns(sFileRead)
-    conv_list_of_ans(sFileRead)
+    conv_list_of_qns(sFileReadList)
+    conv_list_of_ans(sFileReadList)
 
+json_file_manager()
 
+#cleaned_questions_list  = list( map(clean_string, questions_list)  ) 
+cleaned_questions_list = questions_list
 # a function to return a random greeting response to a users greetings 
 def greeting_response(text):
     text = text.lower()
@@ -99,15 +106,16 @@ def greeting_response(text):
 # create bot response
 def bot_response(user_input):  
     #cleaning user data 
-    cleaned_user_input = clean_string(user_input)
+    #cleaned_user_input = clean_string(user_input)
+    cleaned_user_input = user_input.lower()
     
-    cleaned_user_input_length = len(cleaned_user_input)
+    cleaned_questions_list.append(cleaned_user_input)
+
+    # appending this to avoid index out of bound error and will be removed at the end
+    answers_list.append( user_input.lower() )
     
-    cleaned_sentence_list.append(cleaned_user_input)
-    sentence_list.append( user_input.lower() )
     
-    
-    cm  = CountVectorizer().fit_transform(cleaned_sentence_list)
+    cm  = CountVectorizer().fit_transform(cleaned_questions_list)
     
     # get the similarity score
     similarity_scores = cosine_similarity(cm[-1], cm)
@@ -127,25 +135,19 @@ def bot_response(user_input):
     bot_response = ''
     for i in range(len(index)):
         if similarty_scores_list[index[i]] > 0.0:
-            bot_response = bot_response + " " + sentence_list[index[i]]
+            bot_response = bot_response + " " + answers_list[index[i]]
             response_flag = 1 
             
             j = j+1
-            
-#         checking for single words 
-#         could be compared to user_input_length instead
-#         if cleaned_user_input_length <= 1:
-#             bot_response = bot_response + " not enough data to get distinct results"
-#             break
-            
+        # limit the number of output values         
         if j > 2:
             break
     if response_flag == 0:
         bot_response = bot_response + ' ' + "I apologize, I don\'t understand"
     
     # removing the added user input
-    cleaned_sentence_list.remove(clean_string(user_input) )
-    sentence_list.remove(user_input.lower())
+    cleaned_questions_list.remove(clean_string(user_input) )
+    answers_list.remove(user_input.lower())
     
     return bot_response
 
@@ -167,3 +169,5 @@ def user_input_f():
                 bot_answer = bot_response(user_input)
                 
                 print('Doc Bot: ' + bot_answer )
+
+user_input_f()
