@@ -27,18 +27,17 @@ corpus = article.text
 text = corpus
 sentence_list = nltk.sent_tokenize(text) # a list of sentences
 
-# a Function to perform data cleaning 
-
+# a Function to perform clean all the newline symbols
 def clean_string(text):
-    
     #Removing the newline replacing it with space
     text = text.replace("\n", " ")
     # Converting to lower case
-    text = text.lower()
-    
-    # removing stopwords
+    text = text.lower()    
+    return text
+
+def remove_stopwords(text):
+    # have to be in small letters
     text = ' '.join([word for word in text.split() if word not in stopwords])
-    
     return text
 
 #built in map function instead of loop to perform the sentence transformation
