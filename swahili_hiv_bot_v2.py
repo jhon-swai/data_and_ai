@@ -1,5 +1,4 @@
 # This bot is based on json file processing 
-from newspaper import Article
 import random
 import string
 import nltk
@@ -17,15 +16,6 @@ stopwords = ["akasema","alikuwa","alisema","baada","basi","bila","cha","chini","
 
 nltk.download('punkt', quiet=True)
 
-# get the article
-article = Article("https://sw.wikipedia.org/wiki/Ukimwi")
-article.download()
-article.parse()
-article.nlp()
-corpus = article.text
-
-text = corpus
-sentence_list = nltk.sent_tokenize(text) # a list of sentences
 
 # a Function to perform clean all the newline symbols
 def clean_string(text):
@@ -48,8 +38,6 @@ def remove_stopwords(text):
     text = ' '.join([word for word in text.split() if word not in stopwords])
     return text
 
-#built in map function instead of loop to perform the sentence transformation
-cleaned_sentence_list = list( map(clean_string, sentence_list))
 
 def index_sort(list_var):
     length = len(list_var)
