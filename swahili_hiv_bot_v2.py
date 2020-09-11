@@ -30,6 +30,10 @@ sentence_list = nltk.sent_tokenize(text) # a list of sentences
 def clean_string(text):
     #Removing the newline replacing it with space
     text = text.replace("\n", " ")
+
+    # removing punctuations
+    text = ''.join([word for word in text if word not in string.punctuation])
+
     # Converting to lower case
     text = text.lower() 
 
@@ -102,12 +106,17 @@ def greeting_response(text):
         if word in user_greetings:
             return random.choice(bot_greetings)
     return None
-        
+def clean_output(text):
+    text = text.replace("\n" , " ")
+    text = text.capitalize()
+    return text
+
+# using levenshtein distance for single words 
+
 # create bot response
 def bot_response(user_input):  
     #cleaning user data 
-    #cleaned_user_input = clean_string(user_input)
-    cleaned_user_input = user_input.lower()
+    cleaned_user_input = clean_string(user_input)
     
     cleaned_questions_list.append(cleaned_user_input)
 
@@ -134,19 +143,20 @@ def bot_response(user_input):
     #initilize the bot response to an empty string
     bot_response = ''
     for i in range(len(index)):
-        if similarty_scores_list[index[i]] > 0.0:
-            bot_response = bot_response + " " + answers_list[index[i]]
+        if similarty_scores_list[index[i]] > 0.5:
+            bot_response = bot_response + " " + clean_output( answers_list[index[i]] )
             response_flag = 1 
             
             j = j+1
         # limit the number of output values         
-        if j > 2:
+        if j > 0:
             break
     if response_flag == 0:
         bot_response = bot_response + ' ' + "I apologize, I don\'t understand"
     
     # removing the added user input
-    cleaned_questions_list.remove(clean_string(user_input) )
+    # cleaned_questions_list.remove(clean_string(user_input) )
+    cleaned_questions_list.remove( cleaned_user_input )
     answers_list.remove(user_input.lower())
     
     return bot_response
