@@ -4,6 +4,7 @@ import random
 import string
 import nltk
 import numpy as np
+import Levenshtein
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import warnings
@@ -89,8 +90,8 @@ def json_file_manager():
 
 json_file_manager()
 
-#cleaned_questions_list  = list( map(clean_string, questions_list)  ) 
-cleaned_questions_list = questions_list
+cleaned_questions_list  = list( map(clean_string, questions_list)  ) 
+# cleaned_questions_list = questions_list
 # a function to return a random greeting response to a users greetings 
 def greeting_response(text):
     text = text.lower()
@@ -112,6 +113,17 @@ def clean_output(text):
     return text
 
 # using levenshtein distance for single words 
+# not used
+def levenshtein_distance_f(text):
+    index = 10
+    for i in range(len(questions_list)):
+        # need modification to only compare single word values from the questions list 
+        lScore = Levenshtein.distance( cleaned_questions_list[i],text )
+        if lScore <=3 :
+            index = i
+            break
+    return index
+        
 
 # create bot response
 def bot_response(user_input):  
@@ -158,7 +170,6 @@ def bot_response(user_input):
     # cleaned_questions_list.remove(clean_string(user_input) )
     cleaned_questions_list.remove( cleaned_user_input )
     answers_list.remove(user_input.lower())
-    
     return bot_response
 
 exit_list = ['exit', 'bye', 'end']
