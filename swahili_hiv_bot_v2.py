@@ -7,6 +7,7 @@ import Levenshtein
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import json
+from difflib import SequenceMatcher
 
 
 
@@ -100,7 +101,7 @@ def clean_output(text):
     return text
 
 # using levenshtein distance for single words 
-# not used
+# not used yet
 def levenshtein_distance_f(text):
     index = 10
     for i in range(len(questions_list)):
@@ -110,7 +111,15 @@ def levenshtein_distance_f(text):
             index = i
             break
     return index
-        
+
+def sequence_matcher_f(user_input_str):
+    for i in cleaned_questions_list:
+        sim_score =  SequenceMatcher(None, user_input_str, i).ratio()
+        if ( sim_score ) > 0.5 :
+            ind = cleaned_questions_list.index(i)
+            return answers_list[ind]
+    return None
+
 
 # create bot response
 def bot_response(user_input):  
@@ -142,7 +151,7 @@ def bot_response(user_input):
     #initilize the bot response to an empty string
     bot_response = ''
     for i in range(len(index)):
-        if similarty_scores_list[index[i]] > 0.5:
+        if similarty_scores_list[index[i]] > 0.4:
             bot_response = bot_response + " " + clean_output( answers_list[index[i]] )
             response_flag = 1 
             
@@ -161,11 +170,15 @@ def bot_response(user_input):
 
 exit_list = ['exit', 'bye', 'end']
 
+def word_count(input_text):
+    input_text = input_text.split()
+    return len(input_text)
+
 def user_input_f():
-    print("This is Doc Bot ready to answer your questions ")
+    print("This is Doc Bot ready to answer your questions: \n \t Enter bye,end or exit to leave")
     
     while(True):
-        user_input = input()
+        user_input = input().lower()
         
         if user_input.lower() in exit_list:
             print('Doc Bot: ' +  "Bye")
@@ -174,8 +187,11 @@ def user_input_f():
             if greeting_response(user_input) != None:
                 print('Doc Bot: ' + greeting_response(user_input))
             else:
-                bot_answer = bot_response(user_input)
-                
+                if word_count(user_input) == 1:
+                    bot_answer  = sequence_matcher_f(user_input)
+                else:
+                    bot_answer = bot_response(user_input)
+
                 print('Doc Bot: ' + bot_answer )
 
 user_input_f()
