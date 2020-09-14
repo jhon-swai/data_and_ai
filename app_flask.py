@@ -1,3 +1,5 @@
+# This implementation relies on an external json file called swahili_qna.json make sure to include it in the same directory
+
 from flask import Flask, request, jsonify
 
 # This bot is based on json file processing 
