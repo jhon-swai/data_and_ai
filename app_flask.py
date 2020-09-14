@@ -189,7 +189,7 @@ def user_input_f(text):
             if greeting_response(user_input) != None:
                 return ('Doc Bot: ' + greeting_response(user_input))
             else:
-                if word_count(user_input) == 1:
+                if word_count(user_input) <= 1:
                     bot_answer  = sequence_matcher_f(user_input)
                 else:
                     bot_answer = bot_response(user_input)
