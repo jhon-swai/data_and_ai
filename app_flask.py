@@ -7,7 +7,6 @@ import random
 import string
 import nltk
 import numpy as np
-import Levenshtein
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import json
@@ -103,18 +102,6 @@ def clean_output(text):
     text = text.replace("\n" , " ")
     text = text.capitalize()
     return text
-
-# using levenshtein distance for single words 
-# not used yet
-def levenshtein_distance_f(text):
-    index = 10
-    for i in range(len(questions_list)):
-        # need modification to only compare single word values from the questions list 
-        lScore = Levenshtein.distance( cleaned_questions_list[i],text )
-        if lScore <=3 :
-            index = i
-            break
-    return index
 
 def sequence_matcher_f(user_input_str):
     for i in cleaned_questions_list:
