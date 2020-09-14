@@ -118,7 +118,7 @@ def sequence_matcher_f(user_input_str):
         if ( sim_score ) > 0.5 :
             ind = cleaned_questions_list.index(i)
             return answers_list[ind]
-    return None
+    return "word too short"
 
 
 # create bot response
@@ -129,7 +129,7 @@ def bot_response(user_input):
     cleaned_questions_list.append(cleaned_user_input)
 
     # appending this to avoid index out of bound error and will be removed at the end
-    answers_list.append( user_input.lower() )
+    # answers_list.append( user_input.lower() )
     
     
     cm  = CountVectorizer().fit_transform(cleaned_questions_list)
@@ -142,7 +142,8 @@ def bot_response(user_input):
     index = index_sort(similarty_scores_list)
     
     # removing the first index which is obviously the user's own input
-    index = index[1:]
+    index.remove(max(index))
+    
     response_flag = 0
     
     #for counting the number of scores that are above 0
@@ -151,7 +152,7 @@ def bot_response(user_input):
     #initilize the bot response to an empty string
     bot_response = ''
     for i in range(len(index)):
-        if similarty_scores_list[index[i]] > 0.4:
+        if similarty_scores_list[index[i]] > 0.5:
             bot_response = bot_response + " " + clean_output( answers_list[index[i]] )
             response_flag = 1 
             
@@ -165,7 +166,7 @@ def bot_response(user_input):
     # removing the added user input
     # cleaned_questions_list.remove(clean_string(user_input) )
     cleaned_questions_list.remove( cleaned_user_input )
-    answers_list.remove(user_input.lower())
+    # answers_list.remove(user_input.lower())
     return bot_response
 
 exit_list = ['exit', 'bye', 'end']
@@ -187,10 +188,10 @@ def user_input_f():
             if greeting_response(user_input) != None:
                 print('Doc Bot: ' + greeting_response(user_input))
             else:
-                if word_count(user_input) == 1:
+                if word_count(user_input) <= 1:
                     bot_answer  = sequence_matcher_f(user_input)
                 else:
-                    bot_answer = bot_response(user_input)
+                    bot_answer = bot_response( user_input )
 
                 print('Doc Bot: ' + bot_answer )
 
