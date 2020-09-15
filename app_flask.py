@@ -117,12 +117,9 @@ def bot_response(user_input):
     #cleaning user data 
     cleaned_user_input = clean_string(user_input)
     
-    cleaned_questions_list.append(cleaned_user_input)
+    cleaned_questions_list.append(cleaned_user_input)  
 
-    # appending this to avoid index out of bound error and will be removed at the end
-    answers_list.append( user_input.lower() )
-    
-    
+    #count vectorization
     cm  = CountVectorizer().fit_transform(cleaned_questions_list)
     
     # get the similarity score
@@ -156,7 +153,6 @@ def bot_response(user_input):
     # removing the added user input
     # cleaned_questions_list.remove(clean_string(user_input) )
     cleaned_questions_list.remove( cleaned_user_input )
-    answers_list.remove(user_input.lower())
     return bot_response
 
 exit_list = ['exit', 'bye', 'end']
